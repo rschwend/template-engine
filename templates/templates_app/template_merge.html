@@ -32,17 +32,17 @@
 {% block extra_scripts %}
 <script>
 (function() {
-    const select = document.getElementById('template-select');
-    const variablesSection = document.getElementById('variables-section');
-    const variableFields = document.getElementById('variable-fields');
-    const previewSection = document.getElementById('preview-section');
-    const previewSubject = document.getElementById('preview-subject');
-    const previewBody = document.getElementById('preview-body');
+    var select = document.getElementById('template-select');
+    var variablesSection = document.getElementById('variables-section');
+    var variableFields = document.getElementById('variable-fields');
+    var previewSection = document.getElementById('preview-section');
+    var previewSubject = document.getElementById('preview-subject');
+    var previewBody = document.getElementById('preview-body');
 
-    let currentTemplate = null;
+    var currentTemplate = null;
 
     select.addEventListener('change', async function() {
-        const pk = this.value;
+        var pk = this.value;
         if (!pk) {
             variablesSection.style.display = 'none';
             previewSection.style.display = 'none';
@@ -50,19 +50,20 @@
             return;
         }
 
-        const resp = await fetch(`/templates/api/${pk}/variables/`);
-        const data = await resp.json();
+        var resp = await fetch('/templates/api/' + pk + '/variables/');
+        var data = await resp.json();
         currentTemplate = data;
 
         // Build variable input fields
         variableFields.innerHTML = '';
         if (data.variables.length > 0) {
             data.variables.forEach(function(varName) {
-                const div = document.createElement('div');
+                var div = document.createElement('div');
                 div.className = 'form-group';
-                div.innerHTML = `<label for="var-${varName}">{{${varName}}}</label>` +
-                    `<input type="text" id="var-${varName}" class="form-control var-input" ` +
-                    `data-var="${varName}" placeholder="${varName}">`;
+                div.innerHTML = '<label for="var-' + varName + '">' +
+                    '&#123;&#123;' + varName + '&#125;&#125;</label>' +
+                    '<input type="text" id="var-' + varName + '" class="form-control var-input" ' +
+                    'data-var="' + varName + '" placeholder="' + varName + '">';
                 variableFields.appendChild(div);
             });
             variablesSection.style.display = '';
@@ -82,13 +83,13 @@
     function renderPreview() {
         if (!currentTemplate) return;
 
-        let subject = currentTemplate.subject;
-        let body = currentTemplate.body;
+        var subject = currentTemplate.subject;
+        var body = currentTemplate.body;
 
         document.querySelectorAll('.var-input').forEach(function(input) {
-            const varName = input.dataset.var;
-            const value = input.value || `{{${varName}}}`;
-            const placeholder = '{{' + varName + '}}';
+            var varName = input.dataset.var;
+            var value = input.value || ('{{' + varName + '}}');
+            var placeholder = '{{' + varName + '}}';
             subject = subject.split(placeholder).join(value);
             body = body.split(placeholder).join(value);
         });
