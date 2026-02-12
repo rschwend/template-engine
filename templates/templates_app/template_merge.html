@@ -3,7 +3,15 @@
 {% block title %}Template Merge{% endblock %}
 
 {% block content %}
-<h1 class="mb-1">Template Merge</h1>
+<h1 class="mb-1">Template View</h1>
+
+<div class="card merge-section">
+    <h2>Template suchen</h2>
+    <div class="form-group">
+        <input type="text" id="search-input" class="form-control" placeholder="Suche in Betreff und Inhalt...">
+    </div>
+    <div id="search-results" class="search-results" style="display:none;"></div>
+</div>
 
 <div class="card merge-section">
     <h2>Template auswählen</h2>
@@ -39,17 +47,61 @@
     var previewSection = document.getElementById('preview-section');
     var previewSubject = document.getElementById('preview-subject');
     var previewBody = document.getElementById('preview-body');
+    var searchInput = document.getElementById('search-input');
+    var searchResults = document.getElementById('search-results');
 
     var currentTemplate = null;
+    var searchTimeout = null;
 
-    select.addEventListener('change', async function() {
-        var pk = this.value;
-        if (!pk) {
-            variablesSection.style.display = 'none';
-            previewSection.style.display = 'none';
-            currentTemplate = null;
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        var query = searchInput.value.trim();
+        if (!query) {
+            searchResults.style.display = 'none';
+            searchResults.innerHTML = '';
             return;
         }
+        searchTimeout = setTimeout(function() {
+            performSearch(query);
+        }, 300);
+    });
+
+    async function performSearch(query) {
+        var resp = await fetch('/templates/api/search/?q=' + encodeURIComponent(query));
+        var data = await resp.json();
+        searchResults.innerHTML = '';
+
+        if (data.results.length === 0) {
+            searchResults.innerHTML = '<div class="search-result-empty">Keine Ergebnisse gefunden.</div>';
+            searchResults.style.display = '';
+            return;
+        }
+
+        data.results.forEach(function(item) {
+            var div = document.createElement('div');
+            div.className = 'search-result-item';
+            div.setAttribute('data-pk', item.id);
+            div.innerHTML = '<strong>' + escapeHtml(item.name) + '</strong>' +
+                '<span class="search-result-subject">' + escapeHtml(item.subject) + '</span>';
+            div.addEventListener('click', function() {
+                selectTemplate(item.id);
+            });
+            searchResults.appendChild(div);
+        });
+        searchResults.style.display = '';
+    }
+
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Select a template by PK (used by both dropdown and search results)
+    async function selectTemplate(pk) {
+        // Sync the dropdown
+        select.value = pk;
 
         var resp = await fetch('/templates/api/' + pk + '/variables/');
         var data = await resp.json();
@@ -79,6 +131,20 @@
 
         renderPreview();
         previewSection.style.display = '';
+
+        // Hide search results after selection
+        searchResults.style.display = 'none';
+    }
+
+    select.addEventListener('change', function() {
+        var pk = this.value;
+        if (!pk) {
+            variablesSection.style.display = 'none';
+            previewSection.style.display = 'none';
+            currentTemplate = null;
+            return;
+        }
+        selectTemplate(pk);
     });
 
     function renderPreview() {

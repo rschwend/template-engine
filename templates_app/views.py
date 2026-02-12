@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -96,6 +97,22 @@ def template_merge(request):
     return render(request, "templates_app/template_merge.html", {
         "templates": templates,
     })
+
+
+@login_required
+def api_template_search(request):
+    """Search templates by subject and body (JSON)."""
+    q = request.GET.get("q", "").strip()
+    templates = MasterTemplate.objects.filter(created_by=request.user)
+    if q:
+        templates = templates.filter(
+            Q(subject__icontains=q) | Q(body__icontains=q)
+        )
+    results = [
+        {"id": t.pk, "name": t.name, "subject": t.subject}
+        for t in templates
+    ]
+    return JsonResponse({"results": results})
 
 
 @login_required

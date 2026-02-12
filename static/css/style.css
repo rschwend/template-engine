@@ -260,6 +260,44 @@ textarea.form-control { resize: vertical; }
     border-bottom: 1px solid var(--border);
 }
 
+/* Search Results */
+.search-results {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.search-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+}
+
+.search-result-item:last-child { border-bottom: none; }
+
+.search-result-item:hover { background: var(--bg); }
+
+.search-result-subject {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-left: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50%;
+}
+
+.search-result-empty {
+    padding: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
 /* Auth forms */
 .auth-container {
     max-width: 400px;
