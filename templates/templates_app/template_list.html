@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Meine Templates{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Meine Templates</h1>
+    <a href="{% url 'template_create' %}" class="btn btn-primary">+ Neues Template</a>
+</div>
+
+{% if templates %}
+    {% for t in templates %}
+        <div class="template-item">
+            <div class="template-info">
+                <h3>{{ t.name }}</h3>
+                <p>Betreff: {{ t.subject|default:"(kein Betreff)" }} &middot; Aktualisiert: {{ t.updated_at|date:"d.m.Y H:i" }}</p>
+            </div>
+            <div class="template-actions">
+                <a href="{% url 'template_edit' t.pk %}" class="btn btn-sm btn-outline">Bearbeiten</a>
+                <a href="{% url 'template_delete' t.pk %}" class="btn btn-sm btn-danger">Löschen</a>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="card text-center">
+        <p>Noch keine Templates vorhanden.</p>
+        <a href="{% url 'template_create' %}" class="btn btn-primary mt-1">Erstes Template erstellen</a>
+    </div>
+{% endif %}
+{% endblock %}

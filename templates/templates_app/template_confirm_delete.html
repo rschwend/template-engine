@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Template löschen{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 class="mb-1">Template löschen</h1>
+    <p>Möchtest du das Template <strong>{{ template.name }}</strong> wirklich löschen?</p>
+    <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Ja, löschen</button>
+        </form>
+        <a href="{% url 'template_list' %}" class="btn btn-outline">Abbrechen</a>
+    </div>
+</div>
+{% endblock %}

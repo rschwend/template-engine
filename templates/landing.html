@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Template Engine - Willkommen{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Template Engine</h1>
+    <p>Erstelle, verwalte und befülle deine Mail-Templates mit dynamischen Variablen.</p>
+    <div class="hero-actions">
+        <a href="{% url 'login' %}" class="btn btn-primary">Anmelden</a>
+        <a href="{% url 'signup' %}" class="btn btn-outline">Registrieren</a>
+    </div>
+</div>
+{% endblock %}
