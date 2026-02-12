@@ -30,6 +30,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
+{% verbatim %}
 <script>
 (function() {
     var select = document.getElementById('template-select');
@@ -61,7 +62,7 @@
                 var div = document.createElement('div');
                 div.className = 'form-group';
                 div.innerHTML = '<label for="var-' + varName + '">' +
-                    '&#123;&#123;' + varName + '&#125;&#125;</label>' +
+                    '{{' + varName + '}}</label>' +
                     '<input type="text" id="var-' + varName + '" class="form-control var-input" ' +
                     'data-var="' + varName + '" placeholder="' + varName + '">';
                 variableFields.appendChild(div);
@@ -99,4 +100,5 @@
     }
 })();
 </script>
+{% endverbatim %}
 {% endblock %}
